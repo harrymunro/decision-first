@@ -54,7 +54,7 @@ def test_scripts_compile():
         compile(script.read_text(), str(script), "exec")
 
 
-def test_jev_ask_dry_run(tmp_path: Path):
+def test_ask_dry_run(tmp_path: Path):
     q = tmp_path / "q.json"
     q.write_text(json.dumps({"urgent": {"type": "noul", "instructions": "Is `item.text` urgent?"}}))
     r = run(
@@ -75,7 +75,7 @@ def test_jev_ask_dry_run(tmp_path: Path):
     assert "urgent" in payload["questions"]
 
 
-def test_jev_ask_refuses_without_key(tmp_path: Path):
+def test_ask_refuses_without_key(tmp_path: Path):
     q = tmp_path / "q.json"
     q.write_text(json.dumps({"x": {"type": "noul", "instructions": "?"}}))
     r = run([str(SCRIPTS / "ask.py"), "--questions", str(q), "--state-text", "hi"])
@@ -114,7 +114,7 @@ def test_jev_eval_agreement(tmp_path: Path):
     assert "75.0%" in r.stdout  # kind
 
 
-def test_jevlab_cycle(tmp_path: Path):
+def test_lab_cycle(tmp_path: Path):
     env = {"DECISION_LAB": str(tmp_path / "lab")}
     r = run(
         [
@@ -177,7 +177,7 @@ def test_prompt_hook_fires_and_stays_quiet():
     assert garbage.returncode == 0
 
 
-def test_jev_ask_rejects_an_empty_items_file(tmp_path: Path):
+def test_ask_rejects_an_empty_items_file(tmp_path: Path):
     q = tmp_path / "q.json"
     q.write_text(json.dumps({"x": {"type": "noul", "instructions": "?"}}))
     items = tmp_path / "items.jsonl"
@@ -200,7 +200,7 @@ def test_shapes_templates_are_runnable_questions(tmp_path: Path):
         assert r.returncode == 0, f"shapes.md block {i}: {r.stderr}"
 
 
-def test_jev_ask_reports_the_model_that_answered(tmp_path: Path):
+def test_ask_reports_the_model_that_answered(tmp_path: Path):
     """The summary has to name the versioned id the API returned, not the alias asked for."""
     import http.server
     import threading
@@ -251,7 +251,7 @@ def test_jev_ask_reports_the_model_that_answered(tmp_path: Path):
     assert "model jev-1.13.0" in r.stderr, r.stderr
 
 
-def test_jevlab_repairs_a_lab_missing_its_subdirectories(tmp_path: Path):
+def test_lab_repairs_a_lab_missing_its_subdirectories(tmp_path: Path):
     lab = tmp_path / "lab"
     lab.mkdir()
     (lab / "LOG.md").write_text("# Trigger log\n\n| date |\n|---|\n")
@@ -273,7 +273,7 @@ def test_jevlab_repairs_a_lab_missing_its_subdirectories(tmp_path: Path):
     assert (lab / "lib" / "ask.py").exists()
 
 
-def test_jev_ask_retries_a_dropped_connection(tmp_path: Path):
+def test_ask_retries_a_dropped_connection(tmp_path: Path):
     """A reset mid-response is transient: urllib raises it raw, and it must still be retried."""
     import socket
     import threading
