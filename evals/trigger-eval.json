@@ -1,0 +1,82 @@
+[
+  {
+    "query": "ok so in the client repo there are like 120 open beads and I want to know which ones are waiting on Sam vs Dana vs nobody. can you go through them and tag each one? bd list --json gives you everything",
+    "should_trigger": true
+  },
+  {
+    "query": "I've got ~2k support emails exported to support-2026q3.mbox. Need a rough split of how many are refund requests vs bug reports vs sales questions, and flag the angry ones",
+    "should_trigger": true
+  },
+  {
+    "query": "write me a script that reads the CSV of job applicants (applicants.csv, cols: name, cv_text, cover_letter) and sorts them into strong / maybe / no for the data engineer role based on the JD in jd.md",
+    "should_trigger": true
+  },
+  {
+    "query": "our RAG pipeline in src/retrieval.py returns 20 chunks and half are junk. can we do something cheap to drop the irrelevant ones before they hit the answer model",
+    "should_trigger": true
+  },
+  {
+    "query": "I keep writing regexes to detect whether a commit message is a fix, a feature or a chore for the changelog generator and they keep breaking. better idea?",
+    "should_trigger": true
+  },
+  {
+    "query": "in our proposal tool we call claude with a prompt that ends 'respond only with HIGH, MEDIUM or LOW' about 400 times per run to rate proposal sections. it's slow and costs a few quid each run",
+    "should_trigger": true
+  },
+  {
+    "query": "size the game repo backlog for me - I want a t-shirt size on every open bead so I can plan the next two weeks",
+    "should_trigger": true
+  },
+  {
+    "query": "before my agent auto-runs shell commands in my agent runner I want a check that says whether the command is destructive. right now it's a hardcoded list of rm/git push --force etc",
+    "should_trigger": true
+  },
+  {
+    "query": "there are a bunch of duplicate-ish issues in platform-repo beads, bd find-duplicates gives me 60 candidate pairs, can you confirm which are actually the same work",
+    "should_trigger": true
+  },
+  {
+    "query": "Review the transcripts in interviews/*.md and pull out every place a stakeholder mentions a risk, categorised by type",
+    "should_trigger": true
+  },
+  {
+    "query": "add a --json flag to the invoice-cli list command and make sure the tests still pass",
+    "should_trigger": false
+  },
+  {
+    "query": "the deploy to cloudflare workers is failing with a 1101 error on the /api/health route, logs attached in deploy.log, what's wrong",
+    "should_trigger": false
+  },
+  {
+    "query": "can you refactor the Dolt sync in beads to use a context manager instead of the try/finally mess in sync.py",
+    "should_trigger": false
+  },
+  {
+    "query": "write a blog post announcing the new School of Simulation course, about 600 words, friendly tone, mention the September cohort",
+    "should_trigger": false
+  },
+  {
+    "query": "sort the beads in the client repo by created_at descending and print the top 20 as a table",
+    "should_trigger": false
+  },
+  {
+    "query": "count how many closed beads in each repo under ~/Workspace were closed in August, one line per repo",
+    "should_trigger": false
+  },
+  {
+    "query": "set up a GitHub Actions workflow for the cli repo that runs ruff and pytest on push",
+    "should_trigger": false
+  },
+  {
+    "query": "explain what the RLCD training method is in the typesafe paper, in plain english, I'm not an ML person",
+    "should_trigger": false
+  },
+  {
+    "query": "rename all the .jsx files in website/src to .tsx and fix the imports",
+    "should_trigger": false
+  },
+  {
+    "query": "compute the total invoiced amount per client for 2026 from the invoices.db sqlite file and give me a bar chart",
+    "should_trigger": false
+  }
+]

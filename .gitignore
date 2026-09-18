@@ -1,0 +1,20 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+.ruff_cache/
+.coverage
+
+# Local runs
+results*.jsonl
+*.tmp
+
+# OS / editors
+.DS_Store
+.idea/
+.vscode/
+
+# Secrets
+.env
+.env.*
