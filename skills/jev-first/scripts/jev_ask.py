@@ -30,6 +30,7 @@ from __future__ import annotations
 import argparse
 import concurrent.futures as cf
 import contextlib
+import http.client
 import json
 import os
 import ssl
@@ -131,7 +132,7 @@ def call(
             wait = float(ra) if ra and ra.replace(".", "", 1).isdigit() else delay
             time.sleep(wait)
             delay = min(delay * 2, 30)
-        except (urllib.error.URLError, TimeoutError) as e:
+        except (OSError, http.client.HTTPException) as e:  # URLError, resets, truncated reads
             if attempt == retries:
                 raise RuntimeError(f"connection failed: {e}") from None
             time.sleep(delay)
@@ -185,6 +186,8 @@ def main() -> None:
             item_id = item.get(args.id_field, i) if isinstance(item, dict) else i
             state = {args.wrap: item} if args.wrap else item
             jobs.append((item_id, state))
+        if not jobs:
+            sys.exit(f"{args.items}: no items")
     else:
         if args.state:
             state = load_json(args.state)
@@ -222,6 +225,7 @@ def main() -> None:
 
         tokens = 0
         latencies: list[float] = []
+        models: set[str] = set()
         failures = 0
         t_start = time.perf_counter()
 
@@ -245,6 +249,7 @@ def main() -> None:
                 usage = payload.get("usage", {})
                 tokens += usage.get("input_tokens", 0)
                 latencies.append(ms)
+                models.add(payload.get("model") or args.model)
                 rec = {
                     "id": item_id,
                     "model": payload.get("model"),
@@ -265,8 +270,9 @@ def main() -> None:
     n = len(latencies)
     p50 = sorted(latencies)[n // 2] if n else 0
     cost = tokens / 1e6 * PRICE_PER_MTOK
+    answered = "/".join(sorted(models)) if models else args.model  # the versioned id: log it
     print(
-        f"\n{n} ok, {failures} failed | model {args.model} | {tokens} input tokens ≈ ${cost:.5f} | "
+        f"\n{n} ok, {failures} failed | model {answered} | {tokens} input tokens ≈ ${cost:.5f} | "
         f"p50 {p50:.0f} ms | wall {wall:.1f} s" + (f" | wrote {args.out}" if args.out else ""),
         file=sys.stderr,
     )

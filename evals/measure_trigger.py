@@ -42,6 +42,8 @@ def run(query, model, timeout, max_turns, raw=False):
             "TIMEOUT",
             -1,
         )
+    except OSError as e:  # claude not on PATH, etc: one bad run must not kill the sweep
+        out, err, rc = "", f"{type(e).__name__}: {e}", -1
     skills = re.findall(r'"name":\s*"Skill".{0,400}?"skill":\s*"([^"]+)"', out, re.S)
     reads = re.findall(r'"file_path":\s*"([^"]*jev-first[^"]*)"', out)
     err_line = ""

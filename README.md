@@ -93,6 +93,9 @@ evals/                    20 trigger prompts and a script that measures the inst
 
 ## Running the scripts by hand
 
+`questions.json` is yours to write: copy a template out of
+`skills/jev-first/references/shapes.md` for the shape you need and edit the wording.
+
 ```sh
 export TYPESAFE_API_KEY=...
 cd skills/jev-first

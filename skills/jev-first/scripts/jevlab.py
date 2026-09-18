@@ -54,11 +54,11 @@ def lab_root() -> Path:
 
 
 def ensure_lab(root: Path) -> None:
-    if (root / "LOG.md").exists():
-        return
     root.mkdir(parents=True, exist_ok=True)
     (root / "cases").mkdir(exist_ok=True)
     (root / "lib").mkdir(exist_ok=True)
+    if (root / "LOG.md").exists():
+        return
     (root / "README.md").write_text(
         "# jev-lab\n\n"
         "Every time an agent spots a step that could be a Jev (TypeSafe System One)\n"

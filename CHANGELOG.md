@@ -5,6 +5,24 @@ All notable changes to jev-first are recorded here. The format follows
 
 ## [Unreleased]
 
+### Fixed
+- `jev_ask.py`: retry connection resets and truncated reads. urllib raises these raw
+  instead of wrapping them in `URLError`, so they escaped the retry loop and were recorded
+  as permanent per-item failures.
+- `jev_ask.py`: the summary line now names the versioned model id the API returned
+  (`jev-1.13.0`) rather than the alias that was requested (`jev-latest`), which is what the
+  skill tells you to record in a case write-up.
+- `jev_ask.py`: an items file with no items exits with a message instead of an IndexError
+  traceback under `--dry-run`.
+- `jevlab.py`: `new` no longer crashes when the lab exists but `cases/` or `lib/` does not;
+  the subdirectories are ensured on every run.
+- `evals/measure_trigger.py`: a run that cannot start (no `claude` on PATH) is reported as
+  an error row instead of aborting the whole sweep.
+
+### Added
+- Tests for each of the above, plus a check that every JSON template in `shapes.md` loads
+  as a questions file.
+
 ## [0.1.0] - 2026-09-18
 
 ### Added
