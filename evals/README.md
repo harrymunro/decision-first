@@ -4,7 +4,7 @@
 and 10 near-miss negatives (sorting by a field, counting, refactoring, prose).
 
 `measure_trigger.py` runs each prompt through `claude -p` with the skill installed and counts
-invocations of `jev-first` (a `Skill` tool call naming it, or a `Read` of its SKILL.md).
+invocations of `decision-first` (a `Skill` tool call naming it, or a `Read` of its SKILL.md).
 
 ```sh
 python3 evals/measure_trigger.py --model claude-fable-5-1 --workers 5 --out results.json

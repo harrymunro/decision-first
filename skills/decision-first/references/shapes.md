@@ -2,7 +2,7 @@
 
 Every shape below comes with the words that usually announce it, the primitive that
 fits, and a template you can copy into `questions.json`. Templates use the raw HTTP
-shape so they work with `scripts/jev_ask.py` and with any SDK.
+shape so they work with `scripts/ask.py` and with any SDK.
 
 ## Trigger vocabulary
 

@@ -1,12 +1,12 @@
 {
-  "name": "jev-first",
-  "version": "0.1.0",
+  "name": "decision-first",
+  "version": "0.1.1",
   "description": "Agent skill that spots bounded-judgment steps, tries TypeSafe's Jev first, and documents every attempt.",
   "author": {
     "name": "Harry Munro",
     "url": "https://github.com/harrymunro"
   },
-  "homepage": "https://github.com/harrymunro/jev-first",
-  "repository": "https://github.com/harrymunro/jev-first",
+  "homepage": "https://github.com/harrymunro/decision-first",
+  "repository": "https://github.com/harrymunro/decision-first",
   "license": "MIT"
 }

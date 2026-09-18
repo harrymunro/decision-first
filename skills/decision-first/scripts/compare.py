@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""Compare jev_ask.py results against known labels, per question.
+"""Compare ask.py results against known labels, per question.
 
-  jev_eval.py results.jsonl --labels labels.json [--threshold 0.5] [--question q]
+  compare.py results.jsonl --labels labels.json [--threshold 0.5] [--question q]
 
 labels.json maps item id -> {question_id: expected}. Expected values:
   noul   -> true/false (or 1/0, "yes"/"no")
@@ -42,7 +42,7 @@ def main() -> None:
     ap = argparse.ArgumentParser(
         description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
     )
-    ap.add_argument("results", help="JSONL from jev_ask.py")
+    ap.add_argument("results", help="JSONL from ask.py")
     ap.add_argument("--labels", required=True, help="JSON: {id: {question_id: expected}}")
     ap.add_argument("--threshold", type=float, default=0.5, help="noul >= threshold counts as yes")
     ap.add_argument("--question", action="append", help="only evaluate these question ids")

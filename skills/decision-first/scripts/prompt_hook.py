@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""UserPromptSubmit hook: nudge the agent to load the jev-first skill when a prompt smells
+"""UserPromptSubmit hook: nudge the agent to load the decision-first skill when a prompt smells
 like a bounded-judgment task. Reads the hook JSON on stdin, prints a one-line reminder on
 stdout when the vocabulary matches, always exits 0 so it can never block a prompt.
 
@@ -82,8 +82,8 @@ def main() -> None:
         return
     shown = ", ".join(hits[:5])
     print(
-        f"jev-first: this looks like it contains a bounded-judgment step (matched: {shown}). "
-        "Load the jev-first skill before planning, name the candidate in one line, "
+        f"decision-first: this looks like it contains a bounded-judgment step (matched: {shown}). "
+        "Load the decision-first skill before planning, name the candidate in one line, "
         "and log the trigger."
     )
 

@@ -1,5 +1,5 @@
 {
-  "name": "jev-first",
+  "name": "decision-first",
   "description": "Agent skill that spots bounded-judgment steps, tries TypeSafe's Jev first, and documents every attempt.",
   "owner": {
     "name": "Harry Munro",
@@ -7,8 +7,8 @@
   },
   "plugins": [
     {
-      "name": "jev-first",
-      "description": "The Jev-first reflex: announce the candidate, try it on real items, measure, decide, and write it up.",
+      "name": "decision-first",
+      "description": "The Decision-first reflex: announce the candidate, try it on real items, measure, decide, and write it up.",
       "source": "./"
     }
   ]

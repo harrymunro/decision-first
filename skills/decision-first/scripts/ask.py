@@ -6,16 +6,16 @@ Stdlib only. Reads TYPESAFE_API_KEY from the environment.
 Examples
 --------
   # one state, questions in a file
-  jev_ask.py --questions q.json --state state.json
+  ask.py --questions q.json --state state.json
 
   # a state inline
-  jev_ask.py --questions q.json --state-text "My card was charged twice"
+  ask.py --questions q.json --state-text "My card was charged twice"
 
   # many items (JSONL or a JSON array), each wrapped under a key, 8 at a time
-  jev_ask.py --questions q.json --items beads.jsonl --wrap bead --workers 8 --out results.jsonl
+  ask.py --questions q.json --items beads.jsonl --wrap bead --workers 8 --out results.jsonl
 
   # see the request without sending it
-  jev_ask.py --questions q.json --state state.json --dry-run
+  ask.py --questions q.json --state state.json --dry-run
 
 questions file: either {"questions": {...}, "state": {...}?} or a bare map of question ids
 to question objects ({"type": "noul"|"choice"|"score", "instructions": ..., "criteria": ...}).

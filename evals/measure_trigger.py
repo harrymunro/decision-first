@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-"""Measure how often the *installed* jev-first skill is invoked by `claude -p` on the eval prompts.
-Counts a trigger when a Skill tool call names jev-first (or a Read touches jev-first/SKILL.md)."""
+"""Measure how often the *installed* decision-first skill is invoked by `claude -p` on the eval prompts.
+Counts a trigger when a Skill tool call names decision-first (or a Read touches decision-first/SKILL.md)."""
 
 import argparse
 import concurrent.futures as cf
@@ -45,7 +45,7 @@ def run(query, model, timeout, max_turns, raw=False):
     except OSError as e:  # claude not on PATH, etc: one bad run must not kill the sweep
         out, err, rc = "", f"{type(e).__name__}: {e}", -1
     skills = re.findall(r'"name":\s*"Skill".{0,400}?"skill":\s*"([^"]+)"', out, re.S)
-    reads = re.findall(r'"file_path":\s*"([^"]*jev-first[^"]*)"', out)
+    reads = re.findall(r'"file_path":\s*"([^"]*decision-first[^"]*)"', out)
     err_line = ""
     for line in out.splitlines():
         if '"is_error":true' in line or '"subtype":"error' in line:
@@ -88,7 +88,7 @@ def main():
             i = futs[f]
             r = f.result()
             results[i] = r
-            hit = any("jev-first" in s for s in r["skills"]) or bool(r["reads"])
+            hit = any("decision-first" in s for s in r["skills"]) or bool(r["reads"])
             err = r["err"] or r["stderr"]
             print(
                 f"[{i:02d}] exp={str(ev[i]['should_trigger'])[0]} hit={'Y' if hit else 'n'} "
@@ -104,13 +104,13 @@ def main():
         1
         for i in idx
         if ev[i]["should_trigger"]
-        and (any("jev-first" in s for s in results[i]["skills"]) or results[i]["reads"])
+        and (any("decision-first" in s for s in results[i]["skills"]) or results[i]["reads"])
     )
     fp = sum(
         1
         for i in idx
         if not ev[i]["should_trigger"]
-        and (any("jev-first" in s for s in results[i]["skills"]) or results[i]["reads"])
+        and (any("decision-first" in s for s in results[i]["skills"]) or results[i]["reads"])
     )
     npos = sum(1 for i in idx if ev[i]["should_trigger"])
     nneg = len(idx) - npos

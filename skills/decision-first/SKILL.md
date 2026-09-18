@@ -1,20 +1,19 @@
 ---
-name: jev-first
-description: "Jev-first reflex: spot any step where code or an agent must make a bounded judgment about text or records, and try TypeSafe's Jev (System One model: typed Choice/Score/Noul answers with calibrated probabilities, ~100ms, near-free) before an LLM prompt, a regex heuristic, or a manual pass. Use whenever work involves classifying, tagging, labelling, triaging, prioritising, sizing, scoring, rating, ranking, routing, filtering, deduplicating, matching, verifying, flagging, moderating, reviewing, or detecting anything about tickets, issues, beads, emails, documents, logs, records, tool calls, or PRs; whenever a loop over items needs a judgment per item; whenever an LLM is asked for JSON, a label, a yes/no, or to act as a judge; whenever an if/else depends on meaning; whenever the user says go through, sort into, which of these, is this a, should this, how bad, flag the, or needs a human; and whenever Jev, TypeSafe, or System One is mentioned. Every trigger and use is logged in ~/Workspace/jev-lab."
+name: decision-first
+description: "Decision-first reflex: spot any step where code or an agent must make a bounded judgment about text or records, and try TypeSafe's Jev (System One model: typed Choice/Score/Noul answers with calibrated probabilities, fast, cheap) before an LLM prompt, a regex heuristic, or a manual pass. Use whenever work involves classifying, tagging, labelling, triaging, prioritising, sizing, scoring, rating, ranking, routing, filtering, deduplicating, matching, verifying, flagging, moderating, reviewing, or detecting anything about tickets, issues, beads, emails, documents, logs, records, tool calls, or PRs; whenever a loop over items needs a judgment per item; whenever an LLM is asked for JSON, a label, a yes/no, or to act as a judge; whenever an if/else depends on meaning; whenever the user says go through, sort into, which of these, is this a, should this, how bad, flag the, or needs a human; and whenever Jev, TypeSafe, or System One is mentioned. Every trigger and use is logged in ~/Workspace/decision-lab."
 ---
 
-# Jev first
+# Decision first
 
 Jev is named after Jevons' paradox: make a resource cheap and people use far more of it.
-A typed decision from Jev costs about a thousandth of a cent and comes back in about
-100 ms, so the right instinct is to put one everywhere a program needs to *judge* rather
-than *compute*. The person you work for wants to learn where that instinct pays off, fast,
+A typed decision from Jev is cheap and fast enough that the right instinct is to put one
+everywhere a program needs to *judge* rather than *compute*. The person you work for wants to learn where that instinct pays off, fast,
 across all of their projects. That only works if two things happen every time: the
 candidate step gets spotted while the work is happening, and the attempt gets written down
 in a form the next project can pick up and run. This skill exists to make both automatic.
 
 Paths below are relative to this skill's directory. The lab (where logs and case write-ups
-go) defaults to `~/Workspace/jev-lab`; set `JEV_LAB` to put it elsewhere.
+go) defaults to `~/Workspace/decision-lab`; set `DECISION_LAB` to put it elsewhere.
 
 ## Say it when you see it
 
@@ -97,7 +96,7 @@ Work through these in order. Each one is short.
 3. **Try it** on 5-20 real items before writing any integration. Use the runner:
 
    ```bash
-   python3 scripts/jev_ask.py --questions questions.json --items items.jsonl --wrap item --out results.jsonl
+   python3 scripts/ask.py --questions questions.json --items items.jsonl --wrap item --out results.jsonl
    ```
 
    It is stdlib-only, reads `TYPESAFE_API_KEY`, runs items concurrently, retries on 429,
@@ -105,7 +104,7 @@ Work through these in order. Each one is short.
    request without sending it. Read `references/api.md` for the request shape if you are
    writing the call yourself.
 4. **Measure**. If any labels exist (an existing tag, a closed-reason, a human's earlier
-   pass), run `python3 scripts/jev_eval.py results.jsonl --labels labels.json` and report
+   pass), run `python3 scripts/compare.py results.jsonl --labels labels.json` and report
    agreement per question. With no labels, eyeball the low-confidence tail: it is where
    the question wording is wrong or the state is missing something.
 5. **Decide**: adopt, decline, or park. Say which and why in one sentence.
@@ -113,11 +112,11 @@ Work through these in order. Each one is short.
 
    ```bash
    # every trigger, adopted or not
-   python3 scripts/jevlab.py log --project <repo> --shape <shape> \
+   python3 scripts/lab.py log --project <repo> --shape <shape> \
      --verdict adopted|declined|parked --task "<one line>" --why "<one line>"
 
    # every adoption or real experiment: scaffolds a reusable case directory
-   python3 scripts/jevlab.py new <slug> --project <repo> --title "<title>" \
+   python3 scripts/lab.py new <slug> --project <repo> --title "<title>" \
      --shape <shape> --questions questions.json
    ```
 
@@ -138,7 +137,7 @@ the item count, agreement against any labels, tokens, cost, and p50 latency. If 
 two wordings, keep both and say which won and why. If Jev lost to something else, say what
 beat it. Put every threshold you chose in one place with the reason.
 
-`python3 scripts/jevlab.py index` rebuilds `<lab>/INDEX.md` from the case READMEs, and
+`python3 scripts/lab.py index` rebuilds `<lab>/INDEX.md` from the case READMEs, and
 `<lab>/LOG.md` holds the one-line trigger log. Commit the lab after each case.
 
 ## References

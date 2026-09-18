@@ -1,21 +1,21 @@
 #!/usr/bin/env python3
-"""Keep the jev-lab: the log of every Jev trigger and the reusable case write-ups.
+"""Keep the decision-lab: the log of every Jev trigger and the reusable case write-ups.
 
-Lab root: $JEV_LAB, else ~/Workspace/jev-lab. Created (with git init) on first use.
+Lab root: $DECISION_LAB, else ~/Workspace/decision-lab. Created (with git init) on first use.
 
-  jevlab.py log  --project fls --shape detect --verdict adopted \
+  lab.py log  --project fls --shape detect --verdict adopted \
                  --task "tag beads waiting on a person" \
                  --why "existing 'human' label gives 73 test cases" [--case slug]
 
-  jevlab.py new  blocked-by-human --project fls --title "Beads blocked by a human" \
+  lab.py new  blocked-by-human --project fls --title "Beads blocked by a human" \
                  --shape detect [--questions q.json] [--sample state.json]
 
-  jevlab.py index          # rebuild INDEX.md from case READMEs
-  jevlab.py path           # print the lab root
+  lab.py index          # rebuild INDEX.md from case READMEs
+  lab.py path           # print the lab root
 
 `log` appends one row to LOG.md. `new` scaffolds cases/<date>-<slug>/ with README.md,
-questions.json, sample_state.json, run.sh, and vendored copies of jev_ask.py and
-jev_eval.py under lib/ so every case runs on its own. Both print what they did.
+questions.json, sample_state.json, run.sh, and vendored copies of ask.py and
+compare.py under lib/ so every case runs on its own. Both print what they did.
 """
 
 from __future__ import annotations
@@ -50,7 +50,9 @@ VERDICTS = ["adopted", "declined", "parked", "experiment"]
 
 
 def lab_root() -> Path:
-    return Path(os.environ.get("JEV_LAB", Path.home() / "Workspace" / "jev-lab")).expanduser()
+    return Path(
+        os.environ.get("DECISION_LAB", Path.home() / "Workspace" / "decision-lab")
+    ).expanduser()
 
 
 def ensure_lab(root: Path) -> None:
@@ -60,11 +62,11 @@ def ensure_lab(root: Path) -> None:
     if (root / "LOG.md").exists():
         return
     (root / "README.md").write_text(
-        "# jev-lab\n\n"
+        "# decision-lab\n\n"
         "Every time an agent spots a step that could be a Jev (TypeSafe System One)\n"
         "judgment, it logs the trigger in `LOG.md`. Every real attempt gets a case directory\n"
         "under `cases/` with the questions verbatim, a runnable `run.sh`, results, and a reuse\n"
-        "recipe. `INDEX.md` is the table of cases. Maintained by the `jev-first` skill.\n\n"
+        "recipe. `INDEX.md` is the table of cases. Maintained by the `decision-first` skill.\n\n"
         "Run any case:\n\n"
         "```bash\n"
         "export TYPESAFE_API_KEY=...\n"
@@ -73,11 +75,11 @@ def ensure_lab(root: Path) -> None:
     )
     (root / "LOG.md").write_text(
         "# Trigger log\n\n"
-        "One row per time the jev-first reflex fired, adopted or not.\n\n"
+        "One row per time the decision-first reflex fired, adopted or not.\n\n"
         "| date | project | shape | verdict | task | why | case |\n"
         "|---|---|---|---|---|---|---|\n"
     )
-    (root / "INDEX.md").write_text("# Cases\n\n(no cases yet; run `jevlab.py index`)\n")
+    (root / "INDEX.md").write_text("# Cases\n\n(no cases yet; run `lab.py index`)\n")
     (root / ".gitignore").write_text("results*.jsonl\n*.tmp\n__pycache__/\n.venv/\n")
     if shutil.which("git") and not (root / ".git").exists():
         subprocess.run(["git", "init", "-q"], cwd=root, check=False)
@@ -85,7 +87,7 @@ def ensure_lab(root: Path) -> None:
 
 
 def vendor_lib(root: Path) -> None:
-    for name in ("jev_ask.py", "jev_eval.py"):
+    for name in ("ask.py", "compare.py"):
         src, dst = HERE / name, root / "lib" / name
         if src.exists() and (not dst.exists() or src.stat().st_mtime > dst.stat().st_mtime):
             shutil.copy2(src, dst)
@@ -157,12 +159,12 @@ def cmd_new(args) -> None:
         "set -euo pipefail\n"
         'cd "$(dirname "$0")"\n'
         "if [ -f items.jsonl ]; then\n"
-        "  python3 ../../lib/jev_ask.py --questions questions.json --items items.jsonl "
+        "  python3 ../../lib/ask.py --questions questions.json --items items.jsonl "
         f'{wrap}--out results.jsonl "$@"\n'
         "else\n"
-        '  python3 ../../lib/jev_ask.py --questions questions.json --state sample_state.json "$@"\n'
+        '  python3 ../../lib/ask.py --questions questions.json --state sample_state.json "$@"\n'
         "fi\n"
-        "# with labels: python3 ../../lib/jev_eval.py results.jsonl --labels labels.json\n"
+        "# with labels: python3 ../../lib/compare.py results.jsonl --labels labels.json\n"
     )
     (case / "run.sh").chmod(0o755)
 
@@ -179,7 +181,7 @@ def cmd_new(args) -> None:
     cmd_index(None)
     print(f"created {case}")
     print("  edit README.md, questions.json, sample_state.json (or add items.jsonl), then ./run.sh")
-    print(f"  don't forget: jevlab.py log --case {case.name} ...")
+    print(f"  don't forget: lab.py log --case {case.name} ...")
 
 
 FRONT = re.compile(r"^---\n(.*?)\n---", re.S)

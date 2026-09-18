@@ -1,4 +1,4 @@
-"""Tests for the jev-first skill files and scripts. No network, no key."""
+"""Tests for the decision-first skill files and scripts. No network, no key."""
 
 from __future__ import annotations
 
@@ -11,7 +11,7 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-SKILL = ROOT / "skills" / "jev-first"
+SKILL = ROOT / "skills" / "decision-first"
 SCRIPTS = SKILL / "scripts"
 
 
@@ -33,7 +33,7 @@ def run(
 
 def test_frontmatter_name_and_description_length():
     text = (SKILL / "SKILL.md").read_text()
-    assert text.startswith("---\nname: jev-first\n")
+    assert text.startswith("---\nname: decision-first\n")
     desc = re.search(r'^description: "(.*)"$', text, re.M).group(1)
     assert 200 < len(desc) <= 1024, len(desc)
 
@@ -59,7 +59,7 @@ def test_jev_ask_dry_run(tmp_path: Path):
     q.write_text(json.dumps({"urgent": {"type": "noul", "instructions": "Is `item.text` urgent?"}}))
     r = run(
         [
-            str(SCRIPTS / "jev_ask.py"),
+            str(SCRIPTS / "ask.py"),
             "--questions",
             str(q),
             "--state-text",
@@ -78,7 +78,7 @@ def test_jev_ask_dry_run(tmp_path: Path):
 def test_jev_ask_refuses_without_key(tmp_path: Path):
     q = tmp_path / "q.json"
     q.write_text(json.dumps({"x": {"type": "noul", "instructions": "?"}}))
-    r = run([str(SCRIPTS / "jev_ask.py"), "--questions", str(q), "--state-text", "hi"])
+    r = run([str(SCRIPTS / "ask.py"), "--questions", str(q), "--state-text", "hi"])
     assert r.returncode != 0
     assert "TYPESAFE_API_KEY" in r.stderr
 
@@ -108,17 +108,17 @@ def test_jev_eval_agreement(tmp_path: Path):
     labels.write_text(
         json.dumps({f"i{i}": {"yes": bool(i % 2), "kind": "a" if i < 3 else "b"} for i in range(4)})
     )
-    r = run([str(SCRIPTS / "jev_eval.py"), str(results), "--labels", str(labels)])
+    r = run([str(SCRIPTS / "compare.py"), str(results), "--labels", str(labels)])
     assert r.returncode == 0, r.stderr
     assert "100.0%" in r.stdout  # yes
     assert "75.0%" in r.stdout  # kind
 
 
 def test_jevlab_cycle(tmp_path: Path):
-    env = {"JEV_LAB": str(tmp_path / "lab")}
+    env = {"DECISION_LAB": str(tmp_path / "lab")}
     r = run(
         [
-            str(SCRIPTS / "jevlab.py"),
+            str(SCRIPTS / "lab.py"),
             "new",
             "demo case",
             "--project",
@@ -135,10 +135,10 @@ def test_jevlab_cycle(tmp_path: Path):
     assert len(cases) == 1 and cases[0].name.endswith("-demo-case")
     for name in ("README.md", "questions.json", "sample_state.json", "run.sh"):
         assert (cases[0] / name).exists()
-    assert (tmp_path / "lab" / "lib" / "jev_ask.py").exists()
+    assert (tmp_path / "lab" / "lib" / "ask.py").exists()
     r = run(
         [
-            str(SCRIPTS / "jevlab.py"),
+            str(SCRIPTS / "lab.py"),
             "log",
             "--project",
             "p",
@@ -155,7 +155,7 @@ def test_jevlab_cycle(tmp_path: Path):
     )
     assert r.returncode == 0, r.stderr
     assert "| declined |" in (tmp_path / "lab" / "LOG.md").read_text()
-    r = run([str(SCRIPTS / "jevlab.py"), "index"], env=env)
+    r = run([str(SCRIPTS / "lab.py"), "index"], env=env)
     assert r.returncode == 0
     assert "Demo" in (tmp_path / "lab" / "INDEX.md").read_text()
 
@@ -167,7 +167,7 @@ def test_prompt_hook_fires_and_stays_quiet():
             {"prompt": "go through the support inbox and tag each email as refund, bug or sales"}
         ),
     )
-    assert hit.returncode == 0 and "jev-first" in hit.stdout
+    assert hit.returncode == 0 and "decision-first" in hit.stdout
     quiet = run(
         [str(SCRIPTS / "prompt_hook.py")],
         stdin=json.dumps({"prompt": "rename all the .jsx files to .tsx and fix the imports"}),
@@ -182,9 +182,7 @@ def test_jev_ask_rejects_an_empty_items_file(tmp_path: Path):
     q.write_text(json.dumps({"x": {"type": "noul", "instructions": "?"}}))
     items = tmp_path / "items.jsonl"
     items.write_text("\n")
-    r = run(
-        [str(SCRIPTS / "jev_ask.py"), "--questions", str(q), "--items", str(items), "--dry-run"]
-    )
+    r = run([str(SCRIPTS / "ask.py"), "--questions", str(q), "--items", str(items), "--dry-run"])
     assert r.returncode != 0
     assert "no items" in r.stderr
 
@@ -198,9 +196,7 @@ def test_shapes_templates_are_runnable_questions(tmp_path: Path):
     for i, block in enumerate(blocks):
         q = tmp_path / f"q{i}.json"
         q.write_text(block)
-        r = run(
-            [str(SCRIPTS / "jev_ask.py"), "--questions", str(q), "--state-text", "x", "--dry-run"]
-        )
+        r = run([str(SCRIPTS / "ask.py"), "--questions", str(q), "--state-text", "x", "--dry-run"])
         assert r.returncode == 0, f"shapes.md block {i}: {r.stderr}"
 
 
@@ -235,7 +231,7 @@ def test_jev_ask_reports_the_model_that_answered(tmp_path: Path):
         q.write_text(json.dumps({"x": {"type": "noul", "instructions": "?"}}))
         r = run(
             [
-                str(SCRIPTS / "jev_ask.py"),
+                str(SCRIPTS / "ask.py"),
                 "--questions",
                 str(q),
                 "--state-text",
@@ -261,7 +257,7 @@ def test_jevlab_repairs_a_lab_missing_its_subdirectories(tmp_path: Path):
     (lab / "LOG.md").write_text("# Trigger log\n\n| date |\n|---|\n")
     r = run(
         [
-            str(SCRIPTS / "jevlab.py"),
+            str(SCRIPTS / "lab.py"),
             "new",
             "demo",
             "--project",
@@ -271,10 +267,10 @@ def test_jevlab_repairs_a_lab_missing_its_subdirectories(tmp_path: Path):
             "--shape",
             "detect",
         ],
-        env={"JEV_LAB": str(lab)},
+        env={"DECISION_LAB": str(lab)},
     )
     assert r.returncode == 0, r.stderr
-    assert (lab / "lib" / "jev_ask.py").exists()
+    assert (lab / "lib" / "ask.py").exists()
 
 
 def test_jev_ask_retries_a_dropped_connection(tmp_path: Path):
@@ -313,7 +309,7 @@ def test_jev_ask_retries_a_dropped_connection(tmp_path: Path):
         q.write_text(json.dumps({"x": {"type": "noul", "instructions": "?"}}))
         r = run(
             [
-                str(SCRIPTS / "jev_ask.py"),
+                str(SCRIPTS / "ask.py"),
                 "--questions",
                 str(q),
                 "--state-text",
