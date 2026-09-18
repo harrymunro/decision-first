@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
-"""Measure how often the *installed* decision-first skill is invoked by `claude -p` on the eval prompts.
-Counts a trigger when a Skill tool call names decision-first (or a Read touches decision-first/SKILL.md)."""
+"""Measure how often the installed decision-first skill is invoked by `claude -p`.
+
+Runs each eval prompt and counts a trigger when a Skill tool call names decision-first
+or a Read touches decision-first/SKILL.md."""
 
 import argparse
 import concurrent.futures as cf
