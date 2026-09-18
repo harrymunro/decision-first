@@ -18,3 +18,9 @@ results*.jsonl
 # Secrets
 .env
 .env.*
+
+# Promo video project (Remotion sources, renders): local only
+promo/
+
+# Rendered video files, wherever they land
+*.mp4
